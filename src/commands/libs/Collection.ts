@@ -1,16 +1,14 @@
-import { authenticatedRequest } from '../../extra/utils';
-import { ServerResponse } from 'http';
-
+import { authenticatedRequest } from "../../extra/utils";
 
 export class CollectionManager {
 	/**
-	 * 
-	 * @param {String} id 
-	 * 
+	 *
+	 * @param {String} id
+	 *
 	 * @returns {Collection} The collection
 	 */
-	static get(id) {
-		if (!id || typeof id !== 'string') {
+	static get(id: string | number) {
+		if (!id || typeof id !== "string") {
 			throw new SyntaxError(`Expected id as String got ${typeof id}`);
 		}
 
@@ -18,44 +16,49 @@ export class CollectionManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param {String} id Collection ID
-	 * 
+	 *
 	 * @returns {ServerResponse} The response object.
 	 */
-	static async delete(id) {
-		if (!id || typeof id !== 'string') {
+	static async delete(id: string | number) {
+		if (!id || typeof id !== "string") {
 			throw new SyntaxError(`Expected id as String got ${typeof id}`);
 		}
 
-		return await authenticatedRequest(`/collections/${id}`, { method: 'DELETE' });
+		return await authenticatedRequest(`/collections/${id}`, { method: "DELETE" });
 	}
 
 	/**
-	 * 
+	 *
 	 * @param {String} title Collection Title
 	 * @param {String} description Collection Description
 	 * @param {Boolean} isPrivate Is a private collection?
-	 * 
+	 *
 	 * @returns The created collection
 	 */
-	static async create(title, description, isPrivate = false) {
-		return await authenticatedRequest('/collections', {
-			method: 'POST',
-			body: JSON.stringify({
-				title,
-				description,
-				private: isPrivate
-			}, null, 2)
+	static async create(title: string, description: string, isPrivate: boolean = false) {
+		return await authenticatedRequest("/collections", {
+			method: "POST",
+			body: JSON.stringify(
+				{
+					title,
+					description,
+					private: isPrivate,
+				},
+				null,
+				2,
+			),
 		});
 	}
 }
 
 export class Collection {
-	constructor(id) {
+	id: string | number | null = null;
+
+	constructor(id: string) {
 		this.id = id;
 	}
-
 
 	/**
 	 * @returns {Array} An array of photos.
@@ -64,14 +67,12 @@ export class Collection {
 		return await authenticatedRequest(`/collections/${this.id}/photos`);
 	}
 
-
 	/**
 	 * @returns {Object} Collection.
 	 */
 	async info() {
 		return await authenticatedRequest(`/collections/${this.id}`);
 	}
-
 
 	/**
 	 * @returns An array of collections.
@@ -84,34 +85,34 @@ export class Collection {
 	 * @returns {ServerResponse} The response object.
 	 */
 	async delete() {
-		return await authenticatedRequest(`/collections/${this.id}`, { method: 'DELETE' });
+		return await authenticatedRequest(`/collections/${this.id}`, { method: "DELETE" });
 	}
 
 	/**
 	 * @returns The added photo.
 	 */
-	async addPhoto(photo_id) {
-		if (!photo_id || typeof id !== 'string') {
-			throw new SyntaxError(`Expected id as String got ${typeof photo_id}`);
+	async addPhoto(photo_id: string | number) {
+		if (!photo_id) {
+			throw new SyntaxError("Photo id required!");
 		}
 
 		return await authenticatedRequest(`/collections/${this.id}/add`, {
-			method: 'POST',
-			body: JSON.stringify({ photo_id }, null, 2)
+			method: "POST",
+			body: JSON.stringify({ photo_id }, null, 2),
 		});
 	}
 
 	/**
 	 * @returns The removed photo.
 	 */
-	async removePhoto(photo_id) {
-		if (!photo_id || typeof photo_id !== 'string') {
+	async removePhoto(photo_id: string) {
+		if (!photo_id) {
 			throw new SyntaxError(`Expected id as String got ${typeof photo_id}`);
 		}
 
 		return await authenticatedRequest(`/collections/${this.id}/remove`, {
-			method: 'DELETE',
-			body: JSON.stringify({ photo_id }, null, 2)
+			method: "DELETE",
+			body: JSON.stringify({ photo_id }, null, 2),
 		});
 	}
 }

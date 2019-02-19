@@ -1,61 +1,68 @@
-import { URL } from 'url';
+import { URL } from "url";
 
-import got from 'got';
-import parseID from '@splash-cli/parse-unsplash-id';
-import { JSDOM } from 'jsdom';
+import got from "got";
+import parseID from "@splash-cli/parse-unsplash-id";
 
-import { parseCollection, authenticatedRequest, tryParse, errorHandler, addTimeTo, now } from './utils';
-import { keys, config } from './config';
+import { parseCollection, authenticatedRequest, tryParse, errorHandler, addTimeTo, now } from "./utils";
+import { keys, config } from "./config";
 
-export default class Unsplash {
-	endpoint = new URL('https://api.unsplash.com');
-	isLogged = config.has('user');
+interface RandomPhotoParams {
+	collection?: string;
+	query?: string;
+	username?: string;
+	featured?: boolean;
+	count?: number;
+}
+
+export default class Unsplash<UnsplashClass> {
+	endpoint: URL = new URL("https://api.unsplash.com");
+	isLogged: boolean = config.has("user");
 
 	static shared = new Unsplash(keys.client_id);
 
-	constructor(client_id) {
-		this.endpoint.searchParams.set('client_id', client_id);
+	constructor(client_id: string) {
+		this.endpoint.searchParams.set("client_id", client_id);
 	}
 
-	async getRandomPhoto({ collection = false, query = false, username = false, featured = false, count = 1 } = {}) {
+	async getRandomPhoto({ collection, query, username, featured = false, count = 1 }: RandomPhotoParams) {
 		const endpoint = this.endpoint;
 
 		// Setup the route
-		endpoint.pathname = '/photos/random';
+		endpoint.pathname = "/photos/random";
 
 		// Safe verification
-		if (typeof count === 'number') {
+		if (typeof count === "number") {
 			// Get only 1 photo
-			endpoint.searchParams.set('count', count);
+			endpoint.searchParams.set("count", `${count}`);
 		}
 
 		// Parse collection aliases
 		if (collection) {
-			if (collection.includes(',')) {
+			if (/\,/g.test(collection)) {
 				collection = collection
-					.split(',')
+					.split(",")
 					.map(parseCollection)
-					.join(',');
+					.join(",");
 
-				endpoint.searchParams.set('collections', collection);
+				endpoint.searchParams.set("collections", collection);
 			} else {
-				endpoint.searchParams.set('collections', collection);
+				endpoint.searchParams.set("collections", collection);
 			}
 		}
 
 		// Encode query
 		if (query) {
-			endpoint.searchParams.set('query', query);
+			endpoint.searchParams.set("query", query);
 		}
 
 		// Encode username
 		if (username) {
-			endpoint.searchParams.set('username', username);
+			endpoint.searchParams.set("username", username);
 		}
 
 		// Limit to featured photos
-		if (typeof featured === 'boolean') {
-			endpoint.searchParams.set('featured', featured);
+		if (typeof featured === "boolean") {
+			endpoint.searchParams.set("featured", `${featured}`);
 		}
 
 		try {
@@ -73,7 +80,7 @@ export default class Unsplash {
 		}
 	}
 
-	async getPhoto(id) {
+	async getPhoto(id: string) {
 		const endpoint = this.endpoint;
 
 		endpoint.pathname = `/photos/${parseID(id)}`;
@@ -93,7 +100,7 @@ export default class Unsplash {
 		}
 	}
 
-	async getDownloadLink(id) {
+	async getDownloadLink(id: string) {
 		const endpoint = this.endpoint;
 
 		endpoint.pathname = `/photos/${parseID(id)}/download`;
@@ -115,7 +122,7 @@ export default class Unsplash {
 
 	async picOfTheDay() {
 		try {
-			const { body: photo } = await got('https://lambda.splash-cli.app/day', {
+			const { body: photo } = await got("https://lambda.splash-cli.app/day", {
 				json: true,
 			});
 
