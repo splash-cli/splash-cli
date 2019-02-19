@@ -1,3 +1,5 @@
+import { Screen as WallpaperScreen, Scale as WallpaperScale } from "wallpaper";
+
 interface Flags {
 	quiet: boolean;
 	day: boolean;
@@ -10,8 +12,8 @@ interface Flags {
 	collection: string;
 	featured: boolean;
 	query: string;
-	scale: "auto" | "fill" | "fit" | "stretch" | "center";
-	screen: string;
+	scale: WallpaperScale;
+	screen: WallpaperScreen;
 	help: boolean;
 	version: boolean;
 }

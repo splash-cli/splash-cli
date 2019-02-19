@@ -4,7 +4,7 @@ import { errorHandler, printBlock, warnIfNotLogged } from "../extra/utils";
 import { CollectionManager } from "./libs/Collection";
 
 // TODO: finish to write this command
-export default async function userCommand([cmd, input]: string[]) {
+export default async function userCommand([cmd, input]: string[]): Promise<void> {
 	warnIfNotLogged();
 
 	try {

@@ -2,6 +2,7 @@ import chalk from "chalk";
 
 import { printBlock } from "../../extra/utils";
 import { config } from "../../extra/config";
+import { AliasItem } from "../../../declarations/global";
 
 export default class Alias {
 	static aliases: AliasItem[] = config.get("aliases") || [];

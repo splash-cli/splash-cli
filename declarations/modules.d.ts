@@ -19,6 +19,9 @@ declare module "@splash-cli/show-copy" {
 }
 
 declare module "wallpaper" {
+	export type Screen = number | "all" | "main";
+	export type Scale = "auto" | "fill" | "fit" | "stretch" | "center";
+
 	export interface WallpaperSetOptions {
 		scale?: "auto" | "fill" | "fit" | "stretch" | "center";
 		screen?: number | "all" | "main";
@@ -43,7 +46,18 @@ declare module "simple-download" {
 		constructor(url: string, name: string);
 		download(): {
 			dir: string;
-			base: string
+			base: string;
 		};
+	}
+}
+
+declare module "conf" {
+	export default class Conf {
+		path: string
+		constructor(options: any)
+		get(key?: string, defaultValue?: any): any
+		has(key?: string): boolean
+		delete(key?: string): void
+		set(key?: string, value?: any): any
 	}
 }

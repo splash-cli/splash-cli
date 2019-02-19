@@ -21,6 +21,7 @@ import Alias from "../commands/libs/Alias";
 import User from "../commands/libs/User";
 import { config, defaultSettings, keys } from "./config";
 
+import { Flags } from "../../declarations/global";
 import { UnsplashPhoto } from "../../declarations/Unsplash";
 
 /**
@@ -291,7 +292,7 @@ export async function download(photo: UnsplashPhoto, url: string, flags: Flags, 
 
 		let screen: any;
 		if (flags.screen) {
-			if (!/[0-9|main|all]+/g.test(flags.screen)) {
+			if (!/[0-9|main|all]+/g.test(String(flags.screen))) {
 				screen = false;
 			} else {
 				screen = flags.screen;

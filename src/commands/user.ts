@@ -1,3 +1,5 @@
+/* tslint:disable */
+
 import { prompt } from "inquirer";
 import chalk from "chalk";
 
@@ -5,7 +7,7 @@ import { errorHandler, warnIfNotLogged, printBlock } from "../extra/utils";
 import { config } from "../extra/config";
 import User from "./libs/User";
 
-export default async function userCommand([cmd]: string[]) {
+export default async function userCommand([cmd]: string[]): Promise<void> {
 	try {
 		if (cmd) cmd = cmd.toString().toLowerCase();
 

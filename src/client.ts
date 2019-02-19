@@ -12,12 +12,14 @@ import mkdirp from "mkdirp";
 import Ora from "ora";
 import { userInfo } from "os";
 import updateNotifier from "update-notifier";
-import wallpaper, { WallpaperOptions } from "wallpaper";
+import wallpaper, { WallpaperSetOptions } from "wallpaper";
 import manifest from "../package.json";
 import commands from "./commands/index";
 import { defaultSettings as defaults } from "./extra/config";
 import Unsplash from "./extra/Unsplash";
 import { clearSettings, download, errorHandler, pathFixer, printBlock } from "./extra/utils";
+import { UnsplashPhoto } from "../declarations/Unsplash";
+import { Flags } from "../declarations/global";
 
 const config = new Conf({ defaults });
 
@@ -26,7 +28,7 @@ const spinner: Ora.Ora = Ora({
 	spinner: isMonth("december") ? "christmas" : "earth",
 });
 
-export default async function(input: string[], flags: Flags) {
+export default async function(input: string[], flags: Flags | any): Promise<any> {
 	const [command, ...subCommands] = input;
 	const options: any = {};
 
@@ -95,7 +97,7 @@ export default async function(input: string[], flags: Flags) {
 			const filePath = pathFixer(flags.set);
 
 			if (fs.existsSync(filePath) && isImage(filePath)) {
-				let options: WallpaperOptions = {};
+				let options: WallpaperSetOptions = {};
 
 				if (flags.scale) options.scale = flags.scale;
 				if (flags.screen) options.screen = flags.screen;

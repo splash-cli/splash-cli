@@ -7,8 +7,9 @@ import figures from "figures";
 import { printBlock } from "../extra/utils";
 import { config } from "../extra/config";
 import Alias from "./libs/Alias";
+import { AliasItem } from "../../declarations/global";
 
-export default function aliasCMD([action, alias, aliasID = false]: [string, any?, (boolean | string)?]): void {
+export default function aliasCMD([action, alias, aliasID]: any[]): void {
 	const aliases: AliasItem[] = config.get("aliases") || [];
 
 	switch (action) {

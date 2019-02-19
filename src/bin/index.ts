@@ -1,5 +1,5 @@
 #! /usr/bin/env node
-
+/* tslint:disable */
 import Meow from "meow";
 import client from "../client";
 import help from "./help";

@@ -1,4 +1,5 @@
 import { pathFixer } from "./utils";
+import { DefaultSettings } from "../../declarations/global";
 
 import Conf from "conf";
 

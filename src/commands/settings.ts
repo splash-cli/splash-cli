@@ -55,7 +55,7 @@ export default async function settings([action, target]: string[]) {
 				target = "pic-of-the-day";
 			}
 
-			const settings = config.get(); //target ? config.get(target) : config.get();
+			const settings = config.get();
 
 			if (settings["pic-of-the-day"].date.delay) {
 				settings["pic-of-the-day"].date.delay = ms(settings["pic-of-the-day"].date.delay);

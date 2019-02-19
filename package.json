@@ -48,7 +48,6 @@
 		"@splash-cli/is-month": "^1.1.1",
 		"@splash-cli/parse-unsplash-id": "^0.0.1",
 		"@splash-cli/show-copy": "^1.1.0",
-		"@types/conf": "^2.1.0",
 		"@types/figures": "^2.0.0",
 		"@types/first-run": "^1.2.0",
 		"@types/got": "^9.4.0",
@@ -80,6 +79,7 @@
 		"ora": "^2.1.0",
 		"simple-download": "^0.5.1",
 		"terminal-link": "^1.1.0",
+		"tslint": "^5.12.1",
 		"update-notifier": "^2.5.0",
 		"wallpaper": "^4.2.0"
 	},

@@ -1,3 +1,5 @@
+/* tslint:disable */
+
 import isMonth from "@splash-cli/is-month";
 import chalk from "chalk";
 

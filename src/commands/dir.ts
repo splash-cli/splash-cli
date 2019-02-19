@@ -3,7 +3,7 @@ import chalk from "chalk";
 import Directory from "./libs/Directory";
 import { printBlock } from "../extra/utils";
 
-export default async function dirCMD([cmd]: string[]) {
+export default async function dirCMD([cmd]: string[]): Promise<void> {
 	switch (cmd) {
 		case "clean":
 			return await Directory.clean();

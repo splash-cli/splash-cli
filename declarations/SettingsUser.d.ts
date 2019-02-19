@@ -35,6 +35,7 @@ interface Profile {
 	uploads_remaining: number;
 	unlimited_uploads: boolean;
 	email: string;
+	url:string;
 }
 
 interface Links {
