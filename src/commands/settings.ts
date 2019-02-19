@@ -10,7 +10,7 @@ import { prompt as ask } from "inquirer";
 import { config } from "../extra/config";
 import { clearSettings, errorHandler, highlightJSON, printBlock, pathFixer } from "../extra/utils";
 
-export default async function settings([action, target]) {
+export default async function settings([action, target]: string[]) {
 	const questions = [];
 
 	if (action) action = action.toString().toLowerCase();
@@ -18,7 +18,7 @@ export default async function settings([action, target]) {
 
 	const _directory = generateQuestion("_directory", "Default download path:", {
 		default: config.get("directory"),
-		filter: (input) => pathFixer(input),
+		filter: (input: string) => pathFixer(input),
 	});
 
 	const _askForLike = generateQuestion("_askForLike", "Prompt to like the downloaded photo after download?", {
@@ -73,7 +73,9 @@ export default async function settings([action, target]) {
 			}
 
 			if (settings[target]) {
-				let o = {};
+				let o: {
+					[key: string]: any;
+				} = {};
 
 				o[target] = settings[target];
 
@@ -91,18 +93,18 @@ export default async function settings([action, target]) {
 					default: false,
 				}),
 			])
-				.then(async ({ confirm }) => {
+				.then(({ confirm }: any) => {
 					if (confirm) {
 						frun.clear();
 
-						await clearSettings();
-
-						printBlock(chalk`{yellow Settings Restored!}`);
+						clearSettings().then(() => {
+							printBlock(chalk`{yellow Settings Restored!}`);
+						});
 					} else {
 						printBlock(chalk`{red {bold Operation aborted!}}`);
 					}
 				})
-				.catch((error) => {
+				.catch((error: any) => {
 					errorHandler(error);
 				});
 			break;
@@ -162,10 +164,10 @@ export default async function settings([action, target]) {
 			}
 
 			if (picUpdateInterval !== undefined) {
-				config.set(
-					"pic-of-the-day",
-					Object.assign({}, config.get("pic-of-the-day"), { date: { delay: picUpdateInterval } }),
-				);
+				config.set("pic-of-the-day", {
+					...config.get("pic-of-the-day"),
+					date: { delay: picUpdateInterval },
+				});
 				validSetting = true;
 			}
 
@@ -211,12 +213,12 @@ export default async function settings([action, target]) {
 	}
 }
 
-function generateQuestion(name, message, options = {}) {
-	const fieldRequired = (input) => {
+function generateQuestion(name: string, message: string, options: any = {}): any {
+	const fieldRequired = (input: string) => {
 		if (input.length) return true;
 		return "Error: that field is required!";
 	};
 
 	options.validate = options.validate || fieldRequired;
-	return Object.assign({ name, message, prefix: chalk.green("#") }, options);
+	return { name, message, prefix: chalk.green("#"), ...options };
 }

@@ -1,4 +1,4 @@
-interface UnsplashPhoto {
+export interface UnsplashPhoto {
 	errors?: string[];
 	id: string;
 	created_at: Date;
@@ -18,7 +18,7 @@ interface UnsplashPhoto {
 	user: UnsplashUser;
 }
 
-interface CurrentUserCollection {
+export interface CurrentUserCollection {
 	id: number;
 	title: string;
 	published_at: Date;
@@ -28,7 +28,7 @@ interface CurrentUserCollection {
 	user: null;
 }
 
-interface Exif {
+export interface Exif {
 	make: string;
 	model: string;
 	exposure_time: string;
@@ -37,25 +37,25 @@ interface Exif {
 	iso: number;
 }
 
-interface UnsplashPhotoLinks {
+export interface UnsplashPhotoLinks {
 	self: string;
 	html: string;
 	download: string;
 	download_location: string;
 }
 
-interface Location {
+export interface Location {
 	city: string;
 	country: string;
 	position: Position;
 }
 
-interface Position {
+export interface Position {
 	latitude: number;
 	longitude: number;
 }
 
-interface Urls {
+export interface Urls {
 	raw: string;
 	full: string;
 	regular: string;
@@ -63,7 +63,7 @@ interface Urls {
 	thumb: string;
 }
 
-interface UnsplashUser {
+export interface UnsplashUser {
 	id: string;
 	updated_at: Date;
 	username: string;
@@ -77,7 +77,7 @@ interface UnsplashUser {
 	links: UserLinks;
 }
 
-interface UserLinks {
+export interface UserLinks {
 	self: string;
 	html: string;
 	photos: string;

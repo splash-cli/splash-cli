@@ -12,9 +12,9 @@ export default async function userCommand([cmd, input]: string[]) {
 
 		switch (cmd) {
 			case "get":
-				let collection = await CollectionManager.get(input);
+				let collection: any = await CollectionManager.get(input);
 
-				collection: RemoteCollection = await collection.info();
+				collection = await collection.info();
 
 				printBlock(chalk`
   {yellow {bold ${collection.title}}} [{cyan ${collection.total_photos}}]

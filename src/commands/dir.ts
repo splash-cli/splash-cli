@@ -3,14 +3,14 @@ import chalk from "chalk";
 import Directory from "./libs/Directory";
 import { printBlock } from "../extra/utils";
 
-export default async function dirCMD([cmd]) {
+export default async function dirCMD([cmd]: string[]) {
 	switch (cmd) {
 		case "clean":
 			return await Directory.clean();
 		case "get":
 			return printBlock(chalk`That's the path: "{yellow {underline ${Directory.getPath()}}}"`);
 		case "count":
-			return printBlock(chalk`Found {cyan ${await Directory.count()}} photos.`);
+			return printBlock(chalk`Found {cyan ${String(await Directory.count())}} photos.`);
 		case "help":
 		case "h":
 		case "how":

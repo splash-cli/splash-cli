@@ -17,6 +17,7 @@ interface Flags {
 }
 
 interface DefaultSettings {
+	[key: string]: any;
 	user?: SettingsUser | null;
 	lastWP: string | null;
 	"confirm-wallpaper": boolean;

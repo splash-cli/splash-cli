@@ -6,7 +6,7 @@ import showCopy from "@splash-cli/show-copy";
 import chalk from "chalk";
 import figures from "figures";
 import got from "got";
-import { prompt, Inquirer } from "inquirer";
+import { prompt } from "inquirer";
 import isImage from "is-image";
 import mkdirp from "mkdirp";
 import normalize from "normalize-url";
@@ -16,11 +16,12 @@ import path from "path";
 import RemoteFile from "simple-download";
 import terminalLink from "terminal-link";
 import { URL } from "url";
-import wallpaper, { WallpaperOptions } from "wallpaper";
+import wallpaper from "wallpaper";
 import Alias from "../commands/libs/Alias";
 import User from "../commands/libs/User";
 import { config, defaultSettings, keys } from "./config";
-import inquirer = require("inquirer");
+
+import { UnsplashPhoto } from "../../declarations/Unsplash";
 
 /**
  * @description Generate auth URL
@@ -173,8 +174,6 @@ export async function clearSettings() {
 			config.set(setting, defaultSettings[setting]);
 		}
 	}
-
-	return config.get() === defaultSettings;
 }
 
 /**
@@ -216,7 +215,7 @@ export function errorHandler(error: Error | string) {
  * @description Check if the given string is a path
  * @param {String} p - A Path
  */
-export function isPath(p) {
+export function isPath(p: string) {
 	return /([a-z]\:|)(\w+|\~+|\.|)\\\w+|(\w+|\~+|)\/\w+/i.test(p);
 }
 
@@ -253,7 +252,7 @@ export async function download(photo: UnsplashPhoto, url: string, flags: Flags, 
 
 	if (flags.quiet) {
 		console.log = console.info = () => {};
-		spinner.start = spinner.fail = () => {};
+		spinner.start = spinner.fail = (text: string | undefined): any => null;
 	}
 
 	spinner.start();
@@ -272,7 +271,7 @@ export async function download(photo: UnsplashPhoto, url: string, flags: Flags, 
 
 	const remotePhoto = new RemoteFile(url, filename);
 
-	const fileInfo: any = await remotePhoto.download();
+	const fileInfo = await remotePhoto.download();
 
 	config.set("counter", config.get("counter") + 1);
 
@@ -290,7 +289,7 @@ export async function download(photo: UnsplashPhoto, url: string, flags: Flags, 
 			}
 		}
 
-		let screen;
+		let screen: any;
 		if (flags.screen) {
 			if (!/[0-9|main|all]+/g.test(flags.screen)) {
 				screen = false;
@@ -299,7 +298,7 @@ export async function download(photo: UnsplashPhoto, url: string, flags: Flags, 
 			}
 		}
 
-		let scale;
+		let scale: any;
 		if (flags.scale) {
 			if (!/[auto|fill|fit|stretch|center]/g.test(flags.scale)) {
 				scale = false;
@@ -486,5 +485,3 @@ export const confirmWithExtra = (name: string, message: string, extra: string, o
 		filter: (input: string) => input.toLowerCase(),
 	};
 };
-
-inquirer.qu;

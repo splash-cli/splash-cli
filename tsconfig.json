@@ -6,11 +6,12 @@
 		"declarationMap": true /* Generates a sourcemap for each corresponding '.d.ts' file. */,
 		"sourceMap": true /* Generates corresponding '.map' file. */,
 		"outDir": "./build" /* Redirect output structure to the directory. */,
-		"rootDir": "./src" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
+		"rootDir": "." /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
 		"removeComments": true /* Do not emit comments to output. */,
 		"strict": true /* Enable all strict type-checking options. */,
 		"alwaysStrict": true /* Parse in strict mode and emit "use strict" for each source file. */,
 		"esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
-		"resolveJsonModule": true
+		"resolveJsonModule": true,
+		"lib": ["es2015"]
 	}
 }

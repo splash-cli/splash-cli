@@ -1,5 +1,5 @@
 interface SettingsUser {
-	profile?: Profile;
+	profile: Profile;
 	token?: string;
 	refresh?: string;
 }

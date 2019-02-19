@@ -5,7 +5,7 @@ import { errorHandler, warnIfNotLogged, printBlock } from "../extra/utils";
 import { config } from "../extra/config";
 import User from "./libs/User";
 
-export default async function userCommand([cmd]) {
+export default async function userCommand([cmd]: string[]) {
 	try {
 		if (cmd) cmd = cmd.toString().toLowerCase();
 
@@ -24,7 +24,7 @@ export default async function userCommand([cmd]) {
 			case "edit":
 				warnIfNotLogged();
 
-				const { profile: user } = config.get("user") || {};
+				const { profile: user }: SettingsUser = config.get("user") || {};
 
 				const data = await prompt([
 					{

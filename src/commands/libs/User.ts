@@ -18,6 +18,7 @@ import {
 	printBlock,
 	generateAuthenticationURL,
 } from "../../extra/utils";
+import { UnsplashPhoto } from "../../../declarations/Unsplash";
 
 export default class User {
 	static user = config.get("user") || {};
