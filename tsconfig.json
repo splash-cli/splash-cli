@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"target": "es5",
+		"module": "commonjs",
+		"lib": ["DOM", "ESNext"],
+		"allowJs": false,
+		"outDir": "build",
+		"rootDir": ".",
+		"strict": true,
+		"noImplicitAny": true,
+		"esModuleInterop": true,
+		"resolveJsonModule": true,
+		"baseUrl": "./src"
+	}
+}

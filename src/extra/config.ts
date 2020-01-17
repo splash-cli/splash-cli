@@ -1,8 +1,8 @@
-import { pathFixer } from '../extra/utils';
+import { pathFixer } from './utils';
 
 import Conf from 'conf';
 
-export const defaultSettings = {
+export const defaultSettings: SplashCLI.Settings = {
 	lastWP: null,
 	'confirm-wallpaper': false,
 	shouldReportErrors: false,
@@ -25,11 +25,11 @@ export const defaultSettings = {
 	},
 };
 
-export const config = new Conf({ defaults: defaultSettings });
+export const config = new Conf<SplashCLI.Settings>({ defaults: defaultSettings });
 
 export const keys = {
-	client_id: process.env.CLIENT_ID,
-	client_secret: process.env.CLIENT_SECRET,
+	client_id: process.env.CLIENT_ID as string,
+	client_secret: process.env.CLIENT_SECRET as string,
 	redirect_uri: 'http://localhost:5835/',
 };
 

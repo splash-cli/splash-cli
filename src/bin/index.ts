@@ -1,10 +1,11 @@
 #! /usr/bin/env node
 
 import Meow from 'meow';
-import client from '../client';
 import help from './help';
+import client from '../client';
 
 const { input, flags } = Meow(help, {
+	version: 'v0.0.0',
 	flags: {
 		help: {
 			type: 'boolean',

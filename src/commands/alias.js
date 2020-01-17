@@ -3,12 +3,12 @@ require('regenerator-runtime');
 
 import chalk from 'chalk';
 import figures from 'figures';
+import Table from 'cli-table';
 
 import { printBlock } from '../extra/utils';
 import { config } from '../extra/config';
 import Alias from './libs/Alias';
 import * as TableUtility from '../extra/table-utility';
-import Table from 'cli-table';
 
 export default function aliasCMD([action, alias, aliasID = false]) {
 	const aliases = config.get('aliases') || [];

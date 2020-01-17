@@ -33,7 +33,7 @@ import { Collection } from '../commands/libs/Collection';
  * @description Generate auth URL
  * @param  {...String} scopes
  */
-export function generateAuthenticationURL(...scopes) {
+export function generateAuthenticationURL(...listOfScopes: string[]) {
 	const url = new URL('https://unsplash.com/oauth/authorize');
 	const validScopes = [
 		'public',
@@ -47,7 +47,7 @@ export function generateAuthenticationURL(...scopes) {
 		'write_collections',
 	];
 
-	scopes = scopes.filter((item) => validScopes.indexOf(item) >= 0).join('+');
+	const scopes = listOfScopes.filter((item) => validScopes.indexOf(item) >= 0).join('+');
 
 	url.searchParams.set('client_id', keys.client_id);
 	url.searchParams.set('redirect_uri', keys.redirect_uri);
@@ -60,7 +60,7 @@ export function generateAuthenticationURL(...scopes) {
  * @description Authenticate the user.
  * @param {Object} params
  */
-export async function authenticate({ client_id, client_secret, code, redirect_uri } = {}) {
+export async function authenticate({ client_id, client_secret, code, redirect_uri }: any = {}) {
 	const url = new URL('https://unsplash.com');
 	url.pathname = '/oauth/token';
 
@@ -105,7 +105,7 @@ export async function grabKeys(updateConfig = false) {
  * @param {String} endpoint
  * @param {Object} options
  */
-export async function authenticatedRequest(endpoint, options = {}) {
+export async function authenticatedRequest(endpoint: string, options: any = {}) {
 	warnIfNotLogged();
 
 	if (options.json) {
@@ -129,16 +129,16 @@ export async function authenticatedRequest(endpoint, options = {}) {
 	const response = await got(normalize(`https://api.unsplash.com/${endpoint}`), httpOptions);
 
 	switch (response.statusCode) {
-	case 200:
-	case 201:
-	case 203:
-	case 404:
-	case 500:
-	case 302:
-	case 422:
-		return tryParse(response.body);
-	default:
-		return response;
+		case 200:
+		case 201:
+		case 203:
+		case 404:
+		case 500:
+		case 302:
+		case 422:
+			return tryParse(response.body);
+		default:
+			return response;
 	}
 }
 
@@ -175,11 +175,11 @@ export function warnIfNotLogged() {
  * @description Try to parse json
  * @param {String} string
  */
-export function tryParse(string) {
+export function tryParse(str: string) {
 	try {
-		return JSON.parse(string);
+		return JSON.parse(str);
 	} catch (error) {
-		return string;
+		return str;
 	}
 }
 
@@ -190,11 +190,11 @@ export async function clearSettings() {
 	const settingsList = Object.keys(defaultSettings);
 
 	for (let i = 0; i < settingsList.length; i++) {
-		const setting = settingsList[i];
+		const setting: any = settingsList[i];
 
 		if (config.has(setting)) {
 			config.delete(setting);
-			config.set(setting, defaultSettings[setting]);
+			config.set(setting, defaultSettings[setting as keyof SplashCLI.Settings]);
 		}
 	}
 
@@ -205,7 +205,7 @@ export async function clearSettings() {
  * @description Parse a collection alias
  * @param {String} alias
  */
-export const parseCollection = (alias) => {
+export const parseCollection = (alias: string) => {
 	const exists = Alias.has(alias);
 
 	if (exists) return Alias.get(alias).id;
@@ -213,7 +213,7 @@ export const parseCollection = (alias) => {
 	return alias;
 };
 
-export async function reportPrompt(error) {
+export async function reportPrompt(error: Error) {
 	const { shouldReport } = await prompt({
 		name: 'shouldReport',
 		message: 'Report the error?',
@@ -232,7 +232,7 @@ export async function reportPrompt(error) {
  * @description Beautify any type of error
  * @param {Error} error
  */
-export async function errorHandler(error) {
+export async function errorHandler(error: Error) {
 	config.set('lastError', error);
 
 	const spinner = new Ora();
@@ -261,13 +261,13 @@ export async function errorHandler(error) {
  * @description Check if the given string is a path
  * @param {String} p - A Path
  */
-export function isPath(p) {
+export function isPath(p: string) {
 	return /([a-z]\:|)(\w+|\~+|\.|)\\\w+|(\w+|\~+|)\/\w+/i.test(p);
 }
 
 export const getCollection = async () => {
 	let list = await User.getCollections();
-	list = list.map(({ title, id, curated, updatedAt, description }) => ({
+	list = list.map(({ title, id, curated, updatedAt, description }: any) => ({
 		id,
 		title,
 		curated,
@@ -275,11 +275,11 @@ export const getCollection = async () => {
 		description,
 	}));
 
-	const searchCollections = (collections, defaultValue = '') => (answers, input) => {
+	const searchCollections = (collections: any, defaultValue = '') => (answers: any, input: any) => {
 		input = input || defaultValue || '';
 
 		return new Promise(async (resolve) => {
-			collections = collections.map((item) => chalk`{dim [${item.id}]} {yellow ${item.title}}`);
+			collections = collections.map((item: any) => chalk`{dim [${item.id}]} {yellow ${item.title}}`);
 			const fuzzyResult = fuzzy.filter(input, collections);
 			resolve(fuzzyResult.map((el) => el.original));
 		});
@@ -290,7 +290,7 @@ export const getCollection = async () => {
 			name: 'collection_id',
 			type: 'autocomplete',
 			message: 'Please choose a collection',
-			source: (answers, input) => searchCollections(list)(answers, input),
+			source: (answers: any, input: any) => searchCollections(list)(answers, input),
 			filter: (value) => parseInt(value.match(/\[(\d+)\].*?/i)[1].trim()),
 		},
 	]);
@@ -306,7 +306,7 @@ export const getCollection = async () => {
  * @param {Object} flags
  * @param {Bool} setAsWP
  */
-export async function download(photo, url, flags, setAsWP = true) {
+export async function download(photo: any, url: string, flags: SplashCLI.Flags, setAsWP: boolean = true) {
 	let dir = config.get('directory');
 
 	if (config.get('userFolder') === true) {
@@ -350,7 +350,7 @@ export async function download(photo, url, flags, setAsWP = true) {
 
 	const remotePhoto = new RemoteFile(url, filename);
 
-	remotePhoto.download().then(async (fileInfo) => {
+	remotePhoto.download().then(async (fileInfo: any) => {
 		config.set('counter', config.get('counter') + 1);
 
 		if (!flags.quiet) spinner.succeed();
@@ -498,7 +498,7 @@ export const logger = {
  * @description Highlight json
  * @param {Object} data
  */
-export function highlightJSON(data) {
+export function highlightJSON(data: object) {
 	let jsonString = JSON.stringify(data, null, 2);
 
 	jsonString = jsonString.replace(/[\{|\}|\,|\:|\[|\]]+/g, chalk`{dim $&}`);
@@ -514,7 +514,7 @@ export function highlightJSON(data) {
  * @name printBlock
  * @description Clear the output before log
  */
-export function printBlock() {
+export function printBlock(...args: any[]) {
 	for (var _len = arguments.length, lines = Array(_len), _key = 0; _key < _len; _key++) {
 		lines[_key] = arguments[_key];
 	}
@@ -538,11 +538,11 @@ export function printBlock() {
  * @description Replaces '~' with home folder
  * @param {String} path
  */
-export function pathFixer(path) {
+export function pathFixer(path: string) {
 	var tester = /^~.*?/g;
 
 	if (tester.test(path)) {
-		path = path.replace(tester, (0, os.homedir)());
+		path = path.replace(tester, os.homedir());
 	}
 
 	return path;
@@ -556,7 +556,7 @@ export function pathFixer(path) {
  * @param {Date} date
  * @param {Number} time
  */
-export const addTimeTo = (date, time) => new Date(date.getTime() + time);
+export const addTimeTo = (date: Date, time: number) => new Date(date.getTime() + time);
 
 /**
  * @name now
@@ -572,7 +572,7 @@ export const now = () => new Date();
  * @param {String} extra
  * @param {Object} options
  */
-export const confirmWithExtra = (name, message, extra, options) => {
+export const confirmWithExtra = (name: string, message: string, extra: string, options: any) => {
 	return {
 		name,
 		message,
@@ -580,8 +580,8 @@ export const confirmWithExtra = (name, message, extra, options) => {
 			options.default === 2 ? extra.toUpperCase() : extra
 		}`,
 		when: options.when,
-		validate: (input) => new RegExp(`(^y$|^yes$)|(^n$|^no$|^nope$)|(^${extra}$)`, 'gi').test(input),
-		filter: (input) => input.toLowerCase(),
+		validate: (input: any) => new RegExp(`(^y$|^yes$)|(^n$|^no$|^nope$)|(^${extra}$)`, 'gi').test(input),
+		filter: (input: any) => input.toLowerCase(),
 	};
 };
 
@@ -589,18 +589,21 @@ export const confirmWithExtra = (name, message, extra, options) => {
  * @name getSystemInfos
  */
 export const getSystemInfos = () => {
-	const getRelease = () => {
+	const getRelease = (): any => {
+		const names: { [key: number]: string } = {
+			12: 'MacOS Mountain Lion',
+			13: 'MacOS Mavericks',
+			14: 'MacOS Yosemite',
+			15: 'MacOS El Capitan',
+			16: 'MacOS Sierra',
+			17: 'MacOS High Sierra',
+			19: 'MacOS Catalina',
+			18: 'MacOS Mojave',
+		};
+
 		if (process.platform === 'darwin') {
-			return {
-				12: 'MacOS Mountain Lion',
-				13: 'MacOS Mavericks',
-				14: 'MacOS Yosemite',
-				15: 'MacOS El Capitan',
-				16: 'MacOS Sierra',
-				17: 'MacOS High Sierra',
-				19: 'MacOS Catalina',
-				18: 'MacOS Mojave',
-			}[os.release().split('.')[0]];
+			const releaseNumber: number = parseInt(os.release().split('.')[0]);
+			return names[releaseNumber];
 		}
 
 		return os.release();

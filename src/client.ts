@@ -1,5 +1,3 @@
-require('babel-polyfill');
-
 import dotenv from 'dotenv';
 
 import { prompt } from 'inquirer';
@@ -264,32 +262,32 @@ export default async function(input, flags) {
 		console.clear();
 
 		switch (command) {
-			case 'collection':
-			case 'collections':
-				commands.collection(subCommands);
-				break;
-			case 'settings':
-			case 'config':
-				commands.settings(subCommands);
-				break;
-			case 'alias':
-			case 'aliases':
-				commands.alias(subCommands);
-				break;
-			case 'user':
-				commands.user(subCommands);
-				break;
-			case 'directory':
-			case 'dir':
-				commands.dir(subCommands);
-				break;
-			default:
-				printBlock(
-					chalk`{bold {red Error}}: "{yellow ${command}}" is not a {dim splash} command.`,
-					'',
-					chalk`See {dim splash --help}`,
-				);
-				break;
+		case 'collection':
+		case 'collections':
+			commands.collection(subCommands);
+			break;
+		case 'settings':
+		case 'config':
+			commands.settings(subCommands);
+			break;
+		case 'alias':
+		case 'aliases':
+			commands.alias(subCommands);
+			break;
+		case 'user':
+			commands.user(subCommands);
+			break;
+		case 'directory':
+		case 'dir':
+			commands.dir(subCommands);
+			break;
+		default:
+			printBlock(
+				chalk`{bold {red Error}}: "{yellow ${command}}" is not a {dim splash} command.`,
+				'',
+				chalk`See {dim splash --help}`,
+			);
+			break;
 		}
 	}
 }
