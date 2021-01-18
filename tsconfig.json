@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "moduleResolution": "Node",
+    "allowJs": true,
+    "noEmit": true,
+    "strict": false,
+    "esModuleInterop": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@commands": ["./commands/index.js"],
+      "@commands/*": ["./commands/*"],
+      "@extra/*": ["./extra/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
