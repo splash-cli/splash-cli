@@ -8,16 +8,16 @@ import config from './storage';
 import { keys } from './config';
 
 export default class Unsplash {
-	endpoint = new URL('https://api.unsplash.com');
-	isLogged = config.has('user');
+	endpoint: URL = new URL('https://api.unsplash.com');
+	isLogged: boolean = config.has('user');
 
-	constructor(client_id) {
+	constructor(client_id: string) {
 		this.endpoint.searchParams.set('client_id', client_id);
 	}
 
 	static shared = new Unsplash(keys.client_id);
 
-	async getCollection(id) {
+	async getCollection(id: string) {
 		const endpoint = this.endpoint;
 
 		// Setup the route
@@ -36,7 +36,7 @@ export default class Unsplash {
 		}
 	}
 
-	async getUser(id) {
+	async getUser(id: string) {
 		const endpoint = this.endpoint;
 
 		// Setup the route
@@ -56,9 +56,9 @@ export default class Unsplash {
 	}
 
 	async getRandomPhoto({
-		collection = false,
-		query = false,
-		username = false,
+		collection = null,
+		query = null,
+		username = null,
 		featured = false,
 		count = 1,
 		orientation = 'landscape',
@@ -71,7 +71,7 @@ export default class Unsplash {
 		// Safe verification
 		if (typeof count === 'number') {
 			// Get only 1 photo
-			endpoint.searchParams.set('count', count);
+			endpoint.searchParams.set('count', count.toString());
 		}
 
 		// Parse collection aliases
@@ -104,7 +104,7 @@ export default class Unsplash {
 
 		// Limit to featured photos
 		if (typeof featured === 'boolean') {
-			endpoint.searchParams.set('featured', featured);
+			endpoint.searchParams.set('featured', featured ? 'true' : 'false');
 		}
 
 		try {
@@ -122,7 +122,7 @@ export default class Unsplash {
 		}
 	}
 
-	async getPhoto(id) {
+	async getPhoto(id: string) {
 		const endpoint = this.endpoint;
 
 		endpoint.pathname = `/photos/${parseID(id)}`;
@@ -142,7 +142,7 @@ export default class Unsplash {
 		}
 	}
 
-	async getDownloadLink(id) {
+	async getDownloadLink(id: string) {
 		const endpoint = this.endpoint;
 
 		endpoint.pathname = `/photos/${parseID(id)}/download`;

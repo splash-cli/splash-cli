@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-require('babel-polyfill');
+import '@babel/polyfill'
 
 import dotenv from 'dotenv';
 
@@ -52,7 +52,7 @@ const spinner = new Ora({
  * @param {String[]} input
  * @param {Object} flags
  */
-export default async function(input, flags) {
+export default async function(input: string[], flags: any) {
 	if (config.has('user') && config.get('user').token) {
 		config.set('keys', {
 			applicationId: keys.client_id,
@@ -209,7 +209,7 @@ export default async function(input, flags) {
 			const filePath = pathFixer(flags.set);
 
 			if (fs.existsSync(filePath) && isImage(filePath)) {
-				let options = {};
+				let options: any = {};
 
 				if (flags.scale) options.scale = flags.scale;
 				if (flags.screen) options.screen = flags.screen;
@@ -219,11 +219,11 @@ export default async function(input, flags) {
 				return printBlock('Wallpaper updated!');
 			}
 
-			return errorHandler('File not found.');
+			return errorHandler('File not found.' as any);
 		}
 
 		try {
-			let photo = false;
+			let photo = null;
 
 			// here you can add your own custom flags
 			if (flags.day) {

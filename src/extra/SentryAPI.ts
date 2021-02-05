@@ -10,14 +10,13 @@ import config from './storage';
 dotenv.config();
 
 export default class SentryAPIClient {
-	BASE_URL = 'https://sentry.io/api/0';
-	DSN = process.env.SENTRY_DSN;
+	BASE_URL: string = 'https://sentry.io/api/0';
+	DSN: string = process.env.SENTRY_DSN;
 
 	static shared = new SentryAPIClient();
 
-	async userFeedBack(error, event_id) {
+	async userFeedBack(error: Error, event_id: string) {
 		if (!event_id || !this.DSN) {
-			console.table({ event_id, dsn: this.DSN });
 			return console.log('NOT A VALID EVENT_ID/DSN');
 		}
 

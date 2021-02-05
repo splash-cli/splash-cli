@@ -32,140 +32,33 @@ import User from '../commands/libs/User';
 import { Collection } from '../commands/libs/Collection';
 
 
-/**
- * @description Generate auth URL
- * @param  {...String} scopes
- */
-export function generateAuthenticationURL(...scopes) {
-	const url = new URL('https://unsplash.com/oauth/authorize');
-	const validScopes = [
-		'public',
-		'read_user',
-		'write_user',
-		'read_photos',
-		'write_photos',
-		'write_likes',
-		'write_followers',
-		'read_collections',
-		'write_collections',
-	];
+export {
+	authenticate,
+	authenticatedRequest,
+	generateAuthenticationURL,
+	checkUserAuth,
+	warnIfNotLogged,
+} from './util/auth'
 
-	scopes = scopes.filter((item) => validScopes.indexOf(item) >= 0).join('+');
+export {
+	isPath,
+	pathFixer
+} from './util/string'
 
-	url.searchParams.set('client_id', keys.client_id);
-	url.searchParams.set('redirect_uri', keys.redirect_uri);
-	url.searchParams.set('response_type', 'code');
+export {
+	mapObject,
+	tryParse
+} from './util/objects'
 
-	return url.href + '&scope=' + scopes;
-}
+export {
+	logger,
+	printBlock
+} from './util/printing'
 
-/**
- * @description Authenticate the user.
- * @param {Object} params
- */
-export async function authenticate({ client_id, client_secret, code, redirect_uri } = {}) {
-	const url = new URL('https://unsplash.com');
-	url.pathname = '/oauth/token';
+export {
+	errorHandler
+} from './util/general'
 
-	const payload = {
-		client_id: client_id,
-		client_secret: client_secret,
-		redirect_uri,
-		grant_type: 'authorization_code',
-		code: code,
-	};
-
-	return await got(normalize(url.href), {
-		method: 'POST',
-		body: JSON.stringify(payload, null, 2),
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	});
-}
-
-/**
- * @description Make an authenticated request (with bearer)
- * @param {String} endpoint
- * @param {Object} options
- */
-export async function authenticatedRequest(endpoint, options = {}) {
-	warnIfNotLogged();
-
-	if (options.json) {
-		options.headers = {
-			...options.headers,
-			'Content-Type': 'application/json',
-		};
-
-		delete options.json;
-	}
-
-	const { token } = config.get('user');
-	const httpOptions = {
-		...options,
-		headers: {
-			...options.headers,
-			Authorization: `Bearer ${token}`,
-		},
-	};
-
-	const response = await got(normalize(`https://api.unsplash.com/${endpoint}`), httpOptions);
-
-	switch (response.statusCode) {
-	case 200:
-	case 201:
-	case 203:
-	case 404:
-	case 500:
-	case 302:
-	case 422:
-		return tryParse(response.body);
-	default:
-		return response;
-	}
-}
-
-/**
- * Check if everything works fine with the user settings.
- */
-export function checkUserAuth() {
-	const { token, profile: user } = config.get('user');
-
-	if (!token) return false;
-
-	if (!user) {
-		authenticatedRequest('me')
-			.then(({ body }) => JSON.parse(body))
-			.then((usr) => config.set('user', Object.assign({ profile: usr }, config.get('user'))))
-			.catch(errorHandler);
-	}
-
-	return true;
-}
-
-/**
- * Warn the user if is not logged.
- */
-export function warnIfNotLogged() {
-	if (!config.has('user') || !config.get('user').token) {
-		return printBlock(chalk`Please log in.`);
-	}
-
-	return true;
-}
-
-/**
- * @description Try to parse json
- * @param {String} string
- */
-export function tryParse(string) {
-	try {
-		return JSON.parse(string);
-	} catch (error) {
-		return string;
-	}
-}
 
 /**
  * @description Restore default settings
@@ -189,10 +82,11 @@ export async function clearSettings() {
  * @description Parse a collection alias
  * @param {String} alias
  */
-export const parseCollection = (alias) => {
+export const parseCollection = (alias: string): string => {
 	const exists = Alias.has(alias);
 
-	if (exists) return Alias.get(alias).id;
+	if (exists)
+		return Alias.get(alias).id.toString();
 
 	return alias;
 };
@@ -212,42 +106,7 @@ export async function reportPrompt(error) {
 	}
 }
 
-/**
- * @description Beautify any type of error
- * @param {Error} error
- */
-export async function errorHandler(error) {
-	config.set('lastError', error);
 
-	const spinner = new Ora();
-	spinner.stop();
-	printBlock(
-		'',
-		chalk`{bold {red OOps! We got an error!}}`,
-		'',
-		chalk`Please report it: {underline {green ${terminalLink(
-			'on GitHub',
-			'https://github.com/splash-cli/splash-cli/issues',
-		)}}}`,
-		'',
-		chalk`{yellow {bold Splash Error}:}`,
-		'',
-	);
-
-	if (config.get('shouldReportErrors') === true || config.get('shouldReportErrorsAutomatically'))
-		await reportPrompt(error);
-
-	// Log the error
-	logger.error(error);
-}
-
-/**
- * @description Check if the given string is a path
- * @param {String} p - A Path
- */
-export function isPath(p) {
-	return /([a-z]\:|)(\w+|\~+|\.|)\\\w+|(\w+|\~+|)\/\w+/i.test(p);
-}
 
 export const getCollection = async () => {
 	let list = await User.getCollections();
@@ -290,7 +149,7 @@ export const getCollection = async () => {
  * @param {Object} flags
  * @param {Bool} setAsWP
  */
-export async function download(photo, url, flags, setAsWP = true) {
+export async function download(photo, url: string, flags, setAsWP: boolean = true) {
 	let messages = [];
 	const rotationAngle = parseInt(flags.rotate) || 0;
 
@@ -513,68 +372,7 @@ export async function download(photo, url, flags, setAsWP = true) {
 	}
 }
 
-/**
- * Log utilty
- */
-export const logger = {
-	info: console.log.bind(console, chalk.cyan(figures.info)),
-	warn: console.log.bind(console, chalk.yellow(figures.warning)),
-	error: console.log.bind(console, chalk.red(figures.cross)),
-};
 
-/**
- * @description Highlight json
- * @param {Object} data
- */
-export function highlightJSON(data) {
-	let jsonString = JSON.stringify(data, null, 2);
-
-	jsonString = jsonString.replace(/[\{|\}|\,|\:|\[|\]]+/g, chalk`{dim $&}`);
-	jsonString = jsonString.replace(/\".*?\"/g, chalk`{yellow $&}`);
-	jsonString = jsonString.replace(/(\s+)(\d+)/g, chalk`$1{cyan $2}`);
-	jsonString = jsonString.replace(/null|undefined/gi, chalk`{dim $&}`);
-	jsonString = jsonString.replace(/true|false/gi, chalk`{magenta $&}`);
-
-	return jsonString;
-}
-
-/**
- * @name printBlock
- * @description Clear the output before log
- */
-export function printBlock() {
-	for (var _len = arguments.length, lines = Array(_len), _key = 0; _key < _len; _key++) {
-		lines[_key] = arguments[_key];
-	}
-
-	console.clear();
-	console.log();
-
-	if (lines.length > 1) {
-		for (var i = 0; i < lines.length; i++) {
-			var line = lines[i];
-			console.log(line);
-		}
-	} else {
-		console.log(lines[0]);
-	}
-
-	console.log();
-}
-
-/**
- * @description Replaces '~' with home folder
- * @param {String} path
- */
-export function pathFixer(path) {
-	var tester = /^~.*?/g;
-
-	if (tester.test(path)) {
-		path = path.replace(tester, (0, os.homedir)());
-	}
-
-	return path;
-}
 
 /**
  *
