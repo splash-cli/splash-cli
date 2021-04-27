@@ -24,7 +24,7 @@ import commands from './commands/index';
 
 import { keys } from './extra/config'
 import config from './extra/storage'
-import Unsplash from './extra/Unsplash';
+import Unsplash, { unsplash } from './extra/Unsplash';
 
 import {
 	clearSettings,
@@ -42,139 +42,139 @@ import SentryAPIClient from './extra/SentryAPI';
 
 dotenv.config();
 
-const spinner = new Ora({
+const spinner = new Ora( {
 	color: 'yellow',
-	spinner: isMonth('december') ? 'christmas' : 'earth',
-});
+	spinner: isMonth( 'december' ) ? 'christmas' : 'earth',
+} );
 
 /**
  *
  * @param {String[]} input
  * @param {Object} flags
  */
-export default async function(input: string[], flags: any) {
-	if (config.has('user') && config.get('user').token) {
-		config.set('keys', {
+export default async function ( input: string[], flags: any ) {
+	if ( config.has( 'user' ) && config.get( 'user' ).token ) {
+		config.set( 'keys', {
 			applicationId: keys.client_id,
 			secret: keys.client_secret,
 			callbackUrl: keys.redirect_uri,
-			bearerToken: config.get('user').token,
-		});
+			bearerToken: config.get( 'user' ).token,
+		} );
 	} else {
-		config.set('keys', {
+		config.set( 'keys', {
 			applicationId: keys.client_id,
 			secret: keys.client_secret,
 			callbackUrl: keys.redirect_uri,
-		});
+		} );
 	}
 
 	if (
-		config.get('lastEventId', null) !== null ||
-		(config.get('lastError', null) !== null && !!process.env.SENTRY_DSN)
+		config.get( 'lastEventId', null ) !== null ||
+		( config.get( 'lastError', null ) !== null && !!process.env.SENTRY_DSN )
 	) {
-		const event_id = config.get('lastEventId', null);
-		const error = config.get('lastError', null);
+		const event_id = config.get( 'lastEventId', null );
+		const error = config.get( 'lastError', null );
 
-		if (event_id != null) {
+		if ( event_id != null ) {
 			console.clear();
 
-			const { shouldSendFeedback } = await prompt({
+			const { shouldSendFeedback } = await prompt( {
 				name: 'shouldSendFeedback',
 				type: 'confirm',
 				message: chalk`Error caught. Would you like to send some feedback?`,
-			});
+			} );
 
-			if (shouldSendFeedback) {
-				await SentryAPIClient.shared.userFeedBack(error, event_id);
+			if ( shouldSendFeedback ) {
+				await SentryAPIClient.shared.userFeedBack( error, event_id );
 			}
 		}
 
-		config.set('lastError', null);
-		config.set('lastEventId', null);
+		config.set( 'lastError', null );
+		config.set( 'lastEventId', null );
 	}
 
-	Sentry.init({ dsn: process.env.SENTRY_DSN });
+	Sentry.init( { dsn: process.env.SENTRY_DSN } );
 
 	try {
 		const system = getSystemInfos();
 		const user = getUserInfo();
 
-		Sentry.setExtras(system);
-		Sentry.setUser(user);
+		Sentry.setExtras( system );
+		Sentry.setUser( user );
 
-		Sentry.setTags({
+		Sentry.setTags( {
 			OS: system.PLATFORM.OS === 'darwin' ? system.PLATFORM.RELEASE : system.PLATFORM.OS,
 			version: system.CLIENT_VERSION,
-		});
-	} catch (e) {
-		errorHandler(e);
+		} );
+	} catch ( e ) {
+		errorHandler( e );
 	}
 
-	dns.lookup('api.unsplash.com', (error) => {
-		if (error && error.code === 'ENOTFOUND') {
-			Sentry.captureMessage('No Internet Connection', Sentry.Severity.Warning);
-			console.error(chalk.red('\n Please check your internet connection.\n'));
-			process.exit(1);
+	dns.lookup( 'api.unsplash.com', ( error ) => {
+		if ( error && error.code === 'ENOTFOUND' ) {
+			Sentry.captureMessage( 'No Internet Connection', Sentry.Severity.Warning );
+			console.error( chalk.red( '\n Please check your internet connection.\n' ) );
+			process.exit( 1 );
 		}
-	});
+	} );
 
 	const [command, ...subCommands] = input;
 	const options = {};
 
 	// Parse commands
-	for (let i = 0; i < subCommands.length; i += 1) {
+	for ( let i = 0; i < subCommands.length; i += 1 ) {
 		options[subCommands[i]] = subCommands[i];
 	}
 
-	if (flags.report) {
+	if ( flags.report ) {
 		console.clear();
-		console.log(chalk`{yellow {bold ERROR REPORTING}}`);
+		console.log( chalk`{yellow {bold ERROR REPORTING}}` );
 		console.log();
-		const event_id = Sentry.captureMessage(`MESSAGE ${randomString(6)}`, Sentry.Severity.Info);
-		await SentryAPIClient.shared.userFeedBack(null, event_id);
-		process.exit(0);
+		const event_id = Sentry.captureMessage( `MESSAGE ${randomString( 6 )}`, Sentry.Severity.Info );
+		await SentryAPIClient.shared.userFeedBack( null, event_id );
+		process.exit( 0 );
 	}
 
-	if (flags.quiet) {
+	if ( flags.quiet ) {
 		const emptyFunction = () => null;
 
 		console.log = console.info = emptyFunction;
 
-		if (spinner.fail) {
+		if ( spinner.fail ) {
 			spinner.fail = emptyFunction;
 		}
 
-		if (spinner.start) {
+		if ( spinner.start ) {
 			spinner.start = emptyFunction;
 		}
 
-		if (spinner.succeed) {
+		if ( spinner.succeed ) {
 			spinner.succeed = emptyFunction;
 		}
 	}
 
-	if (!config.get('directory') || !config.has('directory')) {
-		config.set('directory', pathFixer('~/Pictures/splash_photos'));
+	if ( !config.get( 'directory' ) || !config.has( 'directory' ) ) {
+		config.set( 'directory', pathFixer( '~/Pictures/splash_photos' ) );
 	}
 
-	if (fs.existsSync(config.get('directory'))) {
-		mkdirp(config.get('directory'), (error) => {
-			if (error) return errorHandler(error);
-		});
+	if ( fs.existsSync( config.get( 'directory' ) ) ) {
+		mkdirp( config.get( 'directory' ), ( error ) => {
+			if ( error ) return errorHandler( error );
+		} );
 	}
 
-	if (!config.has('lastWP') || !config.get('lastWP')) {
+	if ( !config.has( 'lastWP' ) || !config.get( 'lastWP' ) ) {
 		const lastWP = await wallpaper.get();
-		config.set('lastWP', lastWP);
+		config.set( 'lastWP', lastWP );
 	}
 
-	updateNotifier({ pkg: manifest, updateCheckInterval: 1000 * 30 }).notify();
+	updateNotifier( { pkg: manifest, updateCheckInterval: 1000 * 30 } ).notify();
 
-	if (frun()) {
+	if ( frun() ) {
 		await clearSettings();
 		await Unsplash.shared.picOfTheDay();
 
-		Sentry.captureMessage('New User', Sentry.Severity.Info);
+		Sentry.captureMessage( 'New User', Sentry.Severity.Info );
 
 		printBlock(
 			chalk`Welcome to ${manifest.name}@{dim ${manifest.version}} {bold @${userInfo().username}}`,
@@ -184,116 +184,129 @@ export default async function(input: string[], flags: any) {
 			chalk`{bold Enjoy "{yellow ${manifest.name}}" running {green splash}}`,
 		);
 
-		dns.lookup('https://analytics.splash-cli.app/api/users', async (err) => {
-			if (err) return;
+		dns.lookup( 'https://analytics.splash-cli.app/api/users', async ( err ) => {
+			if ( err ) return;
 
 			try {
-				await got('https://analytics.splash-cli.app/api/users', {
+				await got( 'https://analytics.splash-cli.app/api/users', {
 					method: 'POST',
-				});
-			} catch (error) {
-				errorHandler(error);
+				} );
+			} catch ( error ) {
+				errorHandler( error );
 			}
-		});
+		} );
 
 		process.exit();
-	} else if (!config.has('pic-of-the-day') || !config.get('pic-of-the-day').date.delay) {
+	} else if ( !config.has( 'picOftheDay' ) || !config.get( 'picOftheDay' ).date.delay ) {
 		await Unsplash.shared.picOfTheDay();
 	}
 
-	if (!command) {
+	if ( !command ) {
 		console.clear();
-		if (!flags.me && !flags.updateMe && !flags.set) spinner.start('Connecting to Unsplash');
+		if ( !flags.me && !flags.updateMe && !flags.set ) spinner.start( 'Connecting to Unsplash' );
 
-		if (flags.set) {
-			const filePath = pathFixer(flags.set);
+		if ( flags.set ) {
+			const filePath = pathFixer( flags.set );
 
-			if (fs.existsSync(filePath) && isImage(filePath)) {
+			if ( fs.existsSync( filePath ) && isImage( filePath ) ) {
 				let options: any = {};
 
-				if (flags.scale) options.scale = flags.scale;
-				if (flags.screen) options.screen = flags.screen;
+				if ( flags.scale ) options.scale = flags.scale;
+				if ( flags.screen ) options.screen = flags.screen;
 
-				wallpaper.set(filePath, options);
+				wallpaper.set( filePath, options );
 
-				return printBlock('Wallpaper updated!');
+				return printBlock( 'Wallpaper updated!' );
 			}
 
-			return errorHandler('File not found.' as any);
+			return errorHandler( 'File not found.' as any );
 		}
 
 		try {
 			let photo = null;
 
 			// here you can add your own custom flags
-			if (flags.day) {
+			if ( flags.day ) {
 				photo = await Unsplash.shared.picOfTheDay();
-			} else if (flags.curated) {
-				const response = await Unsplash.shared.getRandomPhoto({ collection: 317099 });
-				const photos = await response.json();
-
-				photo = randomFrom(photos);
-			} else if (flags.id && parseID(flags.id)) {
-				photo = await Unsplash.shared.getPhoto(parseID(flags.id));
+			} else if ( flags.curated ) {
+				// const response = await Unsplash.shared.getRandomPhoto( { collection: 317099 } );
+				// const photos = await response.json();
+				const { response } = await unsplash.photos.getRandom( { collectionIds: ['317099'] } )
+				photo = randomFrom( response );
+			} else if ( flags.id && parseID( flags.id ) ) {
+				// photo = await Unsplash.shared.getPhoto( parseID( flags.id ) );
+				photo = await unsplash.photos.get( {
+					photoId: parseID( flags.id )
+				} )
 			} else {
-				if (flags.id) spinner.warn = chalk`Invalid ID: "{yellow ${flags.id}}"`;
-
-				photo = await Unsplash.shared.getRandomPhoto({
+				if ( flags.id ) spinner.warn = chalk`Invalid ID: "{yellow ${flags.id}}"`;
+				photo = await unsplash.photos.getRandom( {
 					query: flags.query,
 					username: flags.user,
-					featured: Boolean(flags.featured),
-					collection: flags.collection,
-					orientation: flags.orientation,
-				});
+					featured: Boolean( flags.featured ),
+					collectionIds: [flags.collection],
+					orientation: flags.orientation
+				} )
+
+				// photo = await Unsplash.shared.getRandomPhoto( {
+				// 	query: flags.query,
+				// 	username: flags.user,
+				// 	featured: Boolean( flags.featured ),
+				// 	collection: flags.collection,
+				// 	orientation: flags.orientation,
+				// } );
 			}
 
-			if (photo) {
-				spinner.succeed('Connected!');
+			if ( photo ) {
+				spinner.succeed( 'Connected!' );
 
-				if (Array.isArray(photo)) {
+				if ( Array.isArray( photo ) ) {
 					photo = photo[0];
 				}
 
-				if (photo.errors) {
-					const UnsplashError = new Error('Unsplash Error');
-					Sentry.setExtra('Unsplash Error', photo.errors);
-					const event_id = Sentry.captureException(UnsplashError);
-					config.set('lastEventId', event_id);
+				if ( photo.errors ) {
+					const UnsplashError = new Error( 'Unsplash Error' );
+					Sentry.setExtra( 'Unsplash Error', photo.errors );
+					const event_id = Sentry.captureException( UnsplashError );
+					config.set( 'lastEventId', event_id );
 
-					return printBlock(chalk`{bold {red ERROR:}}`, ...photo.errors);
+					return printBlock( chalk`{bold {red ERROR:}}`, ...photo.errors );
 				}
 
-				const { url } = await Unsplash.shared.getDownloadLink(photo.id);
+				// const { url } = await Unsplash.shared.getDownloadLink( photo.id );
+				const { response: { url } } = await unsplash.photos.trackDownload( {
+					downloadLocation: `/photos/${photo.id}`
+				} )
 
-				await download(photo, url, flags, true);
+				await download( photo, url, flags, true );
 			} else {
-				spinner.fail('Unable to connect.');
+				spinner.fail( 'Unable to connect.' );
 			}
-		} catch (error) {
-			return errorHandler(error);
+		} catch ( error ) {
+			return errorHandler( error );
 		}
 	} else {
 		console.clear();
 
-		switch (command) {
+		switch ( command ) {
 			case 'collection':
 			case 'collections':
-				commands.collection(subCommands);
+				commands.collection( subCommands );
 				break;
 			case 'settings':
 			case 'config':
-				commands.settings(subCommands);
+				commands.settings( subCommands );
 				break;
 			case 'alias':
 			case 'aliases':
-				commands.alias(subCommands);
+				commands.alias( subCommands );
 				break;
 			case 'user':
-				commands.user(subCommands);
+				commands.user( subCommands );
 				break;
 			case 'directory':
 			case 'dir':
-				commands.dir(subCommands);
+				commands.dir( subCommands );
 				break;
 			default:
 				printBlock(

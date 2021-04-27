@@ -3,8 +3,9 @@
     "target": "ES2015",
     "moduleResolution": "Node",
     "allowJs": true,
-    "noEmit": true,
+    "noEmit": false,
     "strict": false,
+		"noImplicitThis": true,
     "esModuleInterop": true,
     "baseUrl": "./src",
     "paths": {

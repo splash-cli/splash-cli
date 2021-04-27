@@ -1,16 +1,17 @@
 import config from '../storage'
 import Ora from 'ora'
-import {printBlock, logger} from './printing'
+import { printBlock, logger } from './printing'
 import chalk from 'chalk'
 import terminalLink from 'terminal-link'
+import { reportPrompt } from '@extra/utils'
 
 
 /**
  * @description Beautify any type of error
  * @param {Error} error
  */
-export const errorHandler = async (error: any): Promise<void> => {
-	config.set('lastError', error);
+export const errorHandler = async ( error: any ): Promise<void> => {
+	config.set( 'lastError', error );
 
 	const spinner = new Ora();
 	spinner.stop();
@@ -27,9 +28,10 @@ export const errorHandler = async (error: any): Promise<void> => {
 		'',
 	);
 
-	if (config.get('shouldReportErrors') === true || config.get('shouldReportErrorsAutomatically'))
-		await reportPrompt(error);
+	if ( config.get( 'shouldReportErrors' ) === true || config.get( 'shouldReportErrorsAutomatically' ) ) {
+		await reportPrompt( error );
+	}
 
 	// Log the error
-	logger.error(error);
+	logger.error( error );
 }

@@ -83,26 +83,26 @@ export default async function settings([action, target, value]) {
 			break;
 		case 'get':
 			if (target && target.toLowerCase() == 'picoftheday') {
-				target = 'pic-of-the-day';
+				target = 'picOftheDay';
 			}
 
 			const user = config.get('user');
 
 			const settings = config.get(); //target ? config.get(target) : config.get();
 
-			if (settings['pic-of-the-day'] && settings['pic-of-the-day'].date) {
-				if (settings['pic-of-the-day'].date.delay) {
-					settings['pic-of-the-day'].date.delay = ms(settings['pic-of-the-day'].date.delay);
+			if (settings['picOftheDay'] && settings['picOftheDay'].date) {
+				if (settings['picOftheDay'].date.delay) {
+					settings['picOftheDay'].date.delay = ms(settings['picOftheDay'].date.delay);
 				}
 			}
 
-			settings.picOfTheDay = settings['pic-of-the-day'];
+			settings.picOfTheDay = settings['picOftheDay'];
 			settings.settingsPath = config.path;
 
 			delete settings['error'];
 			delete settings['keys'];
 			delete settings['user'];
-			delete settings['pic-of-the-day'];
+			delete settings['picOftheDay'];
 
 			if (!settings || (target && !settings[target])) {
 				return printBlock(chalk`Settings key: "{cyan ${target}}" {red {bold NOT} available}.`);

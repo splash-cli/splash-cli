@@ -18,6 +18,7 @@
 	},
 	"scripts": {
 		"build": "babel src -d build --source-maps",
+		"tsc": "tsc",
 		"copyHTML": "rm -rf build/pages && cp -rf src/pages build",
 		"start": "node build/bin/index.js --enable-source-maps",
 		"start.norebuild": "node build/bin/index.js",
@@ -89,6 +90,7 @@
 		"sharp": "^0.25.4",
 		"simple-download": "^0.6.0",
 		"terminal-link": "^1.1.0",
+		"unsplash-js": "^7.0.10",
 		"update-notifier": "^2.5.0",
 		"wallpaper": "^4.2.0"
 	},
@@ -100,15 +102,17 @@
 		"@types/conf": "^3.0.0",
 		"@types/is-image": "^3.0.0",
 		"@types/lodash": "^4.14.167",
-		"@types/node": "^14.14.21",
+		"@types/node": "^15.0.0",
 		"@types/ora": "^3.2.0",
 		"@types/update-notifier": "^5.0.0",
+		"@typescript-eslint/eslint-plugin": "^4.22.0",
+		"@typescript-eslint/parser": "^4.22.0",
 		"babel-eslint": "8",
 		"babel-loader": "^8.2.2",
 		"babel-plugin-module-resolver": "^4.1.0",
 		"babel-plugin-transform-inline-environment-variables": "^0.4.3",
 		"cp-cli": "^2.0.0",
-		"eslint": "4.x",
+		"eslint": "^7.25.0",
 		"rimraf": "^2.6.3",
 		"typescript": "^4.1.3"
 	}
