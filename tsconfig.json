@@ -1,0 +1,28 @@
+{
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": {
+    "outDir": "dist",
+    "target": "ES2015",
+    "declaration": true,
+    "sourceMap": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "skipLibCheck": true,
+    "incremental": true,
+    "noUnusedLocals": true,
+    "strict": true,
+    "allowJs": false,
+    "checkJs": false,
+    "pretty": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "isolatedModules": false,
+    "baseUrl": "./",
+    "paths": {
+      "@src/*": ["src/*"]
+    },
+    "plugins": [
+      { "transform": "typescript-transform-paths" }
+    ]
+  }
+}

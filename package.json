@@ -14,7 +14,12 @@
 		"name": "Federico Vitale",
 		"url": "https://github.com/Rawnly"
 	},
-	"scripts": {},
+	"scripts": {
+		"build": "ttsc -p tsconfig.build.json",
+		"test": "jest",
+		"test:watch": "jest --watchAll",
+		"prebuild": "rm -rf build"
+	},
 	"publishConfig": {
 		"access": "public"
 	},
@@ -46,6 +51,7 @@
 		"wallpaper": "^5.0.1"
 	},
 	"devDependencies": {
+		"@types/jest": "^26.0.23",
 		"@types/node": "^15.12.4",
 		"jest": "^27.0.5",
 		"ts-jest": "^27.0.3",
