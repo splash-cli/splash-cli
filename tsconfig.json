@@ -4,6 +4,7 @@
     "outDir": "dist",
     "target": "ES2015",
     "declaration": true,
+    "resolveJsonModule": true,
     "sourceMap": true,
     "module": "ESNext",
     "moduleResolution": "Node",
