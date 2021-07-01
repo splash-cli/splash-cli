@@ -83,7 +83,7 @@
 		"meow": "^8.0.0",
 		"mkdirp": "^0.5.1",
 		"ms": "^2.1.1",
-		"normalize-url": "^2.0.1",
+		"normalize-url": "^4.5.1",
 		"ora": "^2.1.0",
 		"sharp": "^0.25.4",
 		"simple-download": "^0.6.0",
